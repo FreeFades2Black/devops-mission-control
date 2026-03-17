@@ -14,10 +14,7 @@ provider "aws" {
   profile = "Free"
 }
 
-resource "aws_vpc" "mission_control_vpc" {
-  cidr_block = "10.0.0.0/16"
-  tags       = { Name = "mission-control-vpc" }
-}
+# ONLY ONE VPC BLOCK SHOULD REMAIN:
 resource "aws_vpc" "mission_control_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -37,5 +34,31 @@ resource "aws_subnet" "public_subnet_1" {
   tags = {
     Name = "mission-control-public-1"
   }
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.mission_control_vpc.id
+
+  tags = {
+    Name = "mission-control-igw"
+  }
+}
+
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.mission_control_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "mission-control-public-rt"
+  }
+}
+
+resource "aws_route_table_association" "public_1_assoc" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_rt.id
 }
 
