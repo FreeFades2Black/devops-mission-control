@@ -62,3 +62,35 @@ resource "aws_route_table_association" "public_1_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
+resource "aws_security_group" "mission_sg" {
+  name        = "mission-control-sg"
+  description = "Allow SSH and HTTP traffic"
+  vpc_id      = aws_vpc.mission_control_vpc.id
+
+  # Inbound SSH (Port 22)
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Inbound HTTP (Port 80)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Outbound All Traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = { Name = "mission-control-sg" }
+}
+
