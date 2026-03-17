@@ -28,3 +28,14 @@ resource "aws_vpc" "mission_control_vpc" {
   }
 }
 
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id                  = aws_vpc.mission_control_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1a"
+
+  tags = {
+    Name = "mission-control-public-1"
+  }
+}
+
