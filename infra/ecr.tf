@@ -1,0 +1,35 @@
+resource "aws_ecr_repository" "mission_control_repo" {
+  name                 = "mission-control-app"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = {
+    Project = "DevOps-Mission-Control"
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "repo_policy" {
+  repository = aws_ecr_repository.mission_control_repo.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 10 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 10
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
