@@ -18,3 +18,13 @@ resource "aws_vpc" "mission_control_vpc" {
   cidr_block = "10.0.0.0/16"
   tags       = { Name = "mission-control-vpc" }
 }
+resource "aws_vpc" "mission_control_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = {
+    Name = "mission-control-vpc"
+  }
+}
+
